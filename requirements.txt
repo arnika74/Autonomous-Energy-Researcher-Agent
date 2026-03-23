@@ -1,0 +1,29 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic
+
+streamlit
+requests
+
+langchain
+langchain-community
+langchain-core
+langchain-huggingface
+langchain-groq
+# crewai  # Removed to avoid OpenAI dependency
+
+groq
+
+sentence-transformers
+transformers
+torch
+
+faiss-cpu
+
+# ddgs  # Updated from duckduckgo-search (package was renamed)
+ddgs
+
+beautifulsoup4
+selenium
+webdriver-manager

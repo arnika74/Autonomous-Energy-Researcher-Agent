@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+*.egg
+*.whl
+build/
+dist/
+pip-wheel-metadata/
+.env
+.env.*
+*.env
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+
+# IDE/editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.tmp
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Testing / coverage
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Type hints / profiling
+.mypy_cache/
+.pytype/
+.prof
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local storage / database dumps
+data/
+database/
+*.db
+*.sqlite
+*.sqlite3
+
+# Package managers
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+Pipfile.lock
+poetry.lock
