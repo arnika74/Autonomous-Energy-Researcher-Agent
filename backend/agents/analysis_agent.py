@@ -37,18 +37,19 @@ class AnalysisAgent:
         """Summarize long content to fit within token limits."""
         summary_prompt = (
             f"Summarize this web content relevant to the query: {query}\n\n"
-            f"CONTENT:\n{content[:10000]}\n\n"  # Take first 10K chars
-            "Provide a concise summary (max 1000 words) focusing on key facts and information:"
+            f"CONTENT:\n{content[:18000]}\n\n"  # Take first 18K chars to preserve context
+            "Provide a full summary (max 1200 words) focusing on key facts and information. "
+            "Return complete sentences and don't cut off mid-paragraph."
         )
         
         logger.info("📝 Summarizing content for analysis...")
         try:
             resp = self.llm.invoke(summary_prompt)
             summary = resp if isinstance(resp, str) else str(resp)
-            return summary[:2000]  # Limit summary length
+            return summary[:8000]  # Limit summary length to avoid token blowup
         except Exception as e:
             logger.warning(f"❌ Summarization failed: {e}. Using truncated content.")
-            return content[:1500]  # Fallback to truncation
+            return content[:5000]  # Fallback to larger truncation
 
     def run(self, query: str, raw_corpus: str) -> AnalysisOutput:
         logger.info(f"🔬 Starting analysis for query: {query}")
@@ -66,16 +67,17 @@ class AnalysisAgent:
         logger.info(f"🧹 After cleaning: {len(cleaned)} characters")
         
         # If content is too long, summarize it first
-        if len(cleaned) > 2000:
+        if len(cleaned) > 6000:
             logger.info("📝 Content too long, summarizing first...")
             cleaned = self._summarize_content(query, cleaned)
             logger.info(f"📋 After summarization: {len(cleaned)} characters")
         
-        # Keep prompt much shorter now
+        # Keep prompt concise but allow enough detail for full points
         prompt = (
             f"Analyze this content for the query: {query}\n\n"
-            f"CONTENT:\n{cleaned}\n\n"
-            "Extract 5-8 key bullet points (1-2 sentences each):"
+            f"CONTENT (keep context for accurate points):\n{cleaned}\n\n"
+            "Extract 8-12 key bullet points (1-3 sentences each), all are complete, no unfinished lines. "
+            "If output is truncated, continue until complete." 
         )
 
         logger.info("🤖 Calling LLM for analysis...")
@@ -117,12 +119,12 @@ class AnalysisAgent:
             
             if len(bullet) < 5 or not bullet:
                 continue
-            if len(bullet) > 400:
-                bullet = bullet[:400].rsplit(' ', 1)[0]
+            if len(bullet) > 1024:
+                bullet = bullet[:1024].rsplit(' ', 1)[0]
             
             out.append(bullet)
         
-        return out[:12] if out else []
+        return out[:15] if out else []
 
     def to_dict(self, output: AnalysisOutput) -> Dict[str, Any]:
         return asdict(output)

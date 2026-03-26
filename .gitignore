@@ -1,4 +1,6 @@
+# ===============================
 # Python
+# ===============================
 __pycache__/
 *.py[cod]
 *.pyo
@@ -10,18 +12,26 @@ __pycache__/
 build/
 dist/
 pip-wheel-metadata/
-.env
-.env.*
-*.env
 
-# Virtual environments
+# ===============================
+# Virtual Environments
+# ===============================
 .venv/
 venv/
 ENV/
 env/
 env.bak/
 
-# IDE/editor
+# ===============================
+# Environment Variables (Groq key, API keys)
+# ===============================
+.env
+.env.*
+*.env
+
+# ===============================
+# IDE / Editor Files
+# ===============================
 .vscode/
 .idea/
 *.sublime-project
@@ -30,37 +40,69 @@ env.bak/
 *.tmp
 *.log
 
-# OS files
+# ===============================
+# OS Files
+# ===============================
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Testing / coverage
+# ===============================
+# Testing / Coverage
+# ===============================
 .coverage
 htmlcov/
 .tox/
 .nox/
 
-# Type hints / profiling
+# ===============================
+# Type Checking / Profiling
+# ===============================
 .mypy_cache/
 .pytype/
 .prof
 
+# ===============================
 # Jupyter
+# ===============================
 .ipynb_checkpoints/
 
-# Local storage / database dumps
-data/
-database/
+# ===============================
+# Project Generated Data (IMPORTANT)
+# ===============================
+
+# FAISS vector database
+data/faiss/
+
+# Generated research reports
+data/reports/
+
+# Local database / storage files
 *.db
 *.sqlite
 *.sqlite3
+*.faiss
+*.pkl
+*.index
 
-# Package managers
+# ===============================
+# Do NOT ignore these folders
+# (they contain source code)
+# ===============================
+# backend/
+# frontend/
+# tools/
+# models/
+# config/
+# database/
+
+# ===============================
+# Node / Package Managers (if used later)
+# ===============================
+node_modules/
 npm-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-node_modules/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml

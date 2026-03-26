@@ -1,131 +1,271 @@
+
+
 # Autonomous Energy Researcher Agent
 
-An offline-friendly, **free/open-source** multi-agent research system that:
+An **LLM-powered multi-agent research system** that automatically researches energy-related topics using AI agents, analyzes the data, generates a structured report, and stores it in a local FAISS knowledge base.
 
-User Query → Research Agent → Analysis Agent → Summary Agent → Knowledge Repository (FAISS) → Web UI
+The system supports **Groq (Llama 3.1)** for fast responses and also works **offline using HuggingFace models** as a fallback.
 
-## Tech stack (free only)
+---
 
-- **Python**
-- **LangChain** + **CrewAI**
-- **Local LLM**:
-  - Default: HuggingFace `google/flan-t5-base` (runs locally)
-  - Optional: Ollama local model (also fully local)
-- **Embeddings**: `sentence-transformers/all-MiniLM-L6-v2`
-- **Web search**: DuckDuckGo (free) via `ddgs`
-- **Web scraping**: Selenium (dynamic) + BeautifulSoup fallback
-- **Vector DB**: FAISS (local)
-- **Backend**: FastAPI
-- **Frontend**: Streamlit
+## System Workflow
 
-## Folder structure
+User Query
+→ Research Agent (search + scrape web data)
+→ Analysis Agent (filters & structures content)
+→ Summary Agent (generates final research report)
+→ FAISS Knowledge Base (stores embeddings)
+→ Streamlit Web UI
+
+---
+
+## Tech Stack 
+
+### Programming Language
+
+* Python
+
+### LLM / AI Models
+
+* **Groq API (Primary Model)**
+
+  * `llama-3.1-8b-instant` (very fast and free tier supported)
+
+* **HuggingFace (Fallback Model)**
+
+  * `google/flan-t5-base` (runs locally without internet)
+
+* Optional:
+
+  * Ollama (fully offline LLM support)
+
+---
+
+### Embeddings
+
+* `sentence-transformers/all-MiniLM-L6-v2`
+
+---
+
+### Web Research Tools
+
+* DuckDuckGo Search (free)
+* Selenium (dynamic website scraping)
+* BeautifulSoup (fallback scraper)
+
+---
+
+### Backend
+
+* FastAPI
+
+### Frontend
+
+* Streamlit
+
+### Database / Storage
+
+* FAISS (local vector database)
+* JSON file storage for reports
+
+---
+
+## Environment Configuration (.env)
+
+Create a `.env` file in the project root and add:
+
+```env
+# -------------------------------
+# Primary Model (Groq - Fastest)
+# -------------------------------
+GROQ_MODEL=llama-3.1-8b-instant
+
+# -------------------------------
+# HuggingFace Fallback Model
+# -------------------------------
+HF_MODEL_NAME=google/flan-t5-base
+HF_DEVICE=-1
+HF_MAX_NEW_TOKENS=800
+
+# -------------------------------
+# Optional: Ollama (local models)
+# -------------------------------
+# OLLAMA_MODEL_NAME=mistral
+
+# -------------------------------
+# Scraper Configuration
+# -------------------------------
+SELENIUM_HEADLESS=true
+SELENIUM_PAGE_LOAD_TIMEOUT=25
+REQUEST_TIMEOUT=20
+MAX_SEARCH_RESULTS=1
+MAX_CHARS_PER_PAGE=500
+```
+
+---
+
+## Project Folder Structure
 
 ```
-backend/
-  main.py
-  pipeline.py
-  agents/
-    research_agent.py
-    analysis_agent.py
-    summary_agent.py
-tools/
-  search_tool.py
-  scraper_tool.py
-  embedding_tool.py
-database/
-  faiss_store.py
-  storage.py
-frontend/
-  app.py
-models/
-  llm_model.py
-config/
-  settings.py
-requirements.txt
-README.md
+AUTONOMOUS ENERGY RESEARCHER AGENT
+│
+├── backend
+│   ├── main.py
+│   ├── pipeline.py
+│   ├── agents
+│   │   ├── research_agent.py
+│   │   ├── analysis_agent.py
+│   │   └── summary_agent.py
+│
+├── database
+│   ├── faiss_store.py
+│   └── storage.py
+│
+├── data
+│   ├── faiss
+│   └── reports
+│
+├── frontend
+│   ├── app.py
+│   └── styles.py
+│
+├── config
+├── models
+├── tools
+│
+├── .env
+├── .gitignore
+├── requirements.txt
+└── README.md
 ```
 
-## Setup (Windows / PowerShell)
+---
 
-Create a virtual env and install deps:
+## Installation (Windows / PowerShell)
+
+### Step 1: Create Virtual Environment
 
 ```bash
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+```
+
+Activate:
+
+```bash
+.\.venv\Scripts\activate
+```
+
+---
+
+### Step 2: Install Dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-## Run the backend (FastAPI)
+---
+
+## Run the Backend (FastAPI)
 
 ```bash
 uvicorn backend.main:app --reload --port 8000
 ```
 
-Health check: `http://127.0.0.1:8000/health`
+Test API:
 
-## Run the frontend (Streamlit)
+```
+http://127.0.0.1:8000/health
+```
 
-In a second terminal (same venv):
+---
+
+## Run the Frontend (Streamlit)
+
+Open another terminal:
 
 ```bash
 streamlit run frontend/app.py
 ```
 
-## Selenium notes (important)
+---
 
-This project **tries Selenium first**, then falls back to `requests + BeautifulSoup` if Selenium fails.
+## Features
 
-To enable Selenium scraping reliably, you need a WebDriver installed and available on your PATH:
+* Multi-agent research system (Research + Analysis + Summary agents)
+* Fast responses using Groq (Llama 3.1)
+* Works offline using HuggingFace fallback model
+* Automatic report generation
+* Local FAISS vector database
+* Similarity search for previous research
+* Streamlit-based interactive UI
+* Fully free tools (no paid APIs required)
 
-- **Chrome**: install a matching `chromedriver.exe`
-- Or use Firefox with `geckodriver.exe` (you’d need to update the scraper to Firefox if desired)
+---
 
-If you don’t install a driver, the system will still work via the fallback scraper, but may fail on heavily dynamic sites.
+## What Gets Stored Locally
 
-## Switching the LLM (optional)
+The system automatically stores:
 
-### Option A: HuggingFace (default)
-
-Uses `google/flan-t5-base` locally.
-
-You can override the model name:
-
-```bash
-setx HF_MODEL_NAME "google/flan-t5-base"
+```
+data/reports/     → Generated research reports
+data/faiss/       → Vector embeddings database
 ```
 
-### Option B: Ollama (fully local)
+These folders are **not uploaded to GitHub** (already ignored in `.gitignore`).
 
-1) Install Ollama and pull a model:
+---
 
-```bash
-ollama pull mistral
+## API Endpoints
+
+### Generate Research
+
+```
+POST /research
 ```
 
-2) Set provider:
+Example:
 
-```bash
-setx LLM_PROVIDER "ollama"
-setx OLLAMA_MODEL_NAME "mistral"
+```json
+{
+  "query": "Future of renewable energy in India"
+}
 ```
 
-Restart terminals after `setx`.
+---
 
-## What gets stored
+### Get Previous Reports
 
-- **Reports**: `data/reports/*.json` and `*.txt`
-- **FAISS index**: `data/faiss/index/` (persisted)
+```
+GET /reports?limit=20
+```
 
-The Streamlit UI can:
+---
 
-- Generate a new research report
-- Show sources used
-- Query the FAISS knowledge base for similar past reports
-- List previously saved reports
+### Similarity Search
 
-## API endpoints
+```
+POST /similarity_search
+```
 
-- `POST /research` body: `{ "query": "..." }`
-- `GET /reports?limit=20`
-- `POST /similarity_search` body: `{ "query": "...", "k": 5 }`
+Example:
 
+```json
+{
+  "query": "solar power trends",
+  "k": 5
+}
+```
+
+---
+
+## Author
+
+Final Year AI/ML Project
+**Autonomous Energy Researcher Agent**
+
+---
+
+If you want, I can also give you:
+
+* a **short 5-line project description** (for GitHub Classroom submission), and
+* a **perfect .gitignore for AI projects**.

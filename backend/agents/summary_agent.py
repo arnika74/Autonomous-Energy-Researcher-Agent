@@ -41,17 +41,19 @@ class SummaryAgent:
                 conclusion="Please try a different search query or check the search results."
             )
         
-        key_points_text = "\n".join([f"- {k}" for k in key_points[:10]])
+        key_points_text = "\n".join([f"- {k}" for k in key_points])
 
         prompt = (
             f"Query: {query}\n\n"
             f"Key findings:\n{key_points_text}\n\n"
-            "Write report as JSON (no markdown, no extra text, just JSON):\n"
-            "{"
-            '"title":"short title",'
-            '"introduction":"1-2 sentences",'
-            '"key_findings":["point1","point2","point3"],'
-            '"conclusion":"1-2 sentences"'
+            "You are a summarization engine. Produce a complete structured report with clear full sentences and no incomplete fragments. "
+            "Always include all sections. If output is interrupted/truncated, begin the next response with CONTINUE and carry on.\n\n"
+            "Write report as JSON only (no markdown, no extra text):\n"
+            "{\n"
+            '"title":"<short title>",\n'
+            '"introduction":"<2-3 sentence introduction>",\n'
+            '"key_findings":["<full point 1>","<full point 2>","<full point 3>"],\n'
+            '"conclusion":"<2-3 sentence conclusion>"\n'
             "}"
         )
 
